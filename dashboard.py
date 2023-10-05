@@ -126,6 +126,6 @@ gre_layout = pn.Column(gre_intro,pn.Row(pn.Spacer(width=80),gre_box1,pn.Spacer(w
 
 
 # %%
-pn.Row(ant_layout,gre_layout).show()
+pn.Row(ant_layout,gre_layout).servable()
 
 # %%
