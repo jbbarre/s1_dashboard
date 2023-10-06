@@ -76,6 +76,7 @@
       await pyodide.runPythonAsync(`
         import micropip
         await micropip.install(['https://cdn.holoviz.org/panel/1.2.3/dist/wheels/bokeh-3.2.22py3-none-any.whl', 'https://cdn.holoviz.org/panel/1.2.3/dist/wheels/panel-1.2.3-py3-none-any.whl', 'pyodide-http==0.2.1', 'pandas', 'hvplot']);
+
       `);
       code = `
     import asyncio
