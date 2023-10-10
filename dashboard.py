@@ -15,9 +15,14 @@
 
 # %%
 import pandas as pd
-import hvplot.pandas
 import panel as pn
+import holoviews as hv
+import hvplot.pandas
+from bokeh.models import DatetimeTickFormatter
 
+import colorcet as cc
+
+hv.extension('bokeh')
 pn.extension('echarts','mathjax',comms="vscode")
 
 # %%
@@ -26,13 +31,13 @@ antarctica.tail()
 
 # %%
 df_ant = pd.DataFrame()
-df_ant ['slc']=antarctica['slc']/(2*antarctica['pairs'])*100 # *2: we hav two slc per pair
-df_ant ['offmap.in']=antarctica['offmap.in']/antarctica['pairs']*100
+df_ant ['slc']=antarctica['slc']/(2*antarctica['pairs'])*100 # *2: we have two slc per pair
+df_ant ['ampcor input']=antarctica['ampcor input']/antarctica['pairs']*100
+df_ant ['ampcor ouput']=antarctica['ampcor ouput']/antarctica['pairs']*100
 df_ant ['offmap']=antarctica['offmap']/antarctica['pairs']*100
-df_ant ['calib']=antarctica['calib']/antarctica['pairs']*100
-df_ant ['interf']=antarctica['calib']/antarctica['pairs']*100
-df_ant ['deramp']=antarctica['calib']/antarctica['pairs']*100
-df_ant ['geo']=antarctica['calib']/antarctica['pairs']*100
+df_ant ['interferogram']=antarctica['interferogram']/antarctica['pairs']*100
+df_ant ['deramp']=antarctica['deramp']/antarctica['pairs']*100
+df_ant ['geo']=antarctica['geo']/antarctica['pairs']*100
 df_ant ['figure']=antarctica['figure']/antarctica['pairs']*100
 
 # %%
@@ -42,12 +47,12 @@ greenland.tail()
 # %%
 df_gre = pd.DataFrame()
 df_gre ['slc']=greenland['slc']/(2*greenland['pairs'])*100 # *2: we hav two slc per pair
-df_gre ['offmap.in']=greenland['offmap.in']/greenland['pairs']*100
+df_gre ['ampcor input']=greenland['ampcor input']/greenland['pairs']*100
+df_gre ['ampcor ouput']=greenland['ampcor ouput']/greenland['pairs']*100
 df_gre ['offmap']=greenland['offmap']/greenland['pairs']*100
-df_gre ['calib']=greenland['calib']/greenland['pairs']*100
-df_gre ['interf']=greenland['calib']/greenland['pairs']*100
-df_gre ['deramp']=greenland['calib']/greenland['pairs']*100
-df_gre ['geo']=greenland['calib']/greenland['pairs']*100
+df_gre ['interferogram']=greenland['interferogram']/greenland['pairs']*100
+df_gre ['deramp']=greenland['deramp']/greenland['pairs']*100
+df_gre ['geo']=greenland['geo']/greenland['pairs']*100
 df_gre ['figure']=greenland['figure']/greenland['pairs']*100
 
 # %%
@@ -62,7 +67,7 @@ ant_box1 = pn.Column(
                 bar_color='secondary',
             ),
             pn.panel(
-                f"{antarctica[col].iloc[-1]} / {antarctica['pairs'].iloc[-1]}",
+                f'{antarctica[col].iloc[-1]} / {antarctica["pairs"].iloc[-1]}',
                 margin=(-10, 0, 0, 10),
             ),
         )
