@@ -128,7 +128,7 @@ ant_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(antarctica['cpu'].
                     , bounds=(0, 100),title_size=14, height=260)
 
 # %%
-json_file = 's1_2023_timeseries_ant.json'  # Replace with your JSON file path
+json_file = 'https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_2023_timeseries_ant.json'  # Replace with your JSON file path
 df = pd.read_json(json_file)
 # 2. Convert the date columns to datetime objects
 df['date1'] = pd.to_datetime(df['date1'], format='%y-%m-%d')
@@ -205,7 +205,7 @@ gre_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(greenland['cpu'].i
 
 
 # %%
-json_file = 's1_2023_timeseries_gre.json'  # Replace with your JSON file path
+json_file = 'https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_2023_timeseries_gre.json'  # Replace with your JSON file path
 df = pd.read_json(json_file)
 # 2. Convert the date columns to datetime objects
 df['date1'] = pd.to_datetime(df['date1'], format='%y-%m-%d')
