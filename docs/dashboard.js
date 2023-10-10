@@ -116,7 +116,7 @@ ant_box1 = pn.Column(
                 bar_color='secondary',
             ),
             pn.panel(
-                f'{antarctica[col].iloc[-1]} / {antarctica["pairs"].iloc[-1]}',
+                f"{antarctica[col].iloc[-1]} / {antarctica['pairs'].iloc[-1]}",
                 margin=(-10, 0, 0, 10),
             ),
         )
@@ -128,8 +128,39 @@ ant_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(antarctica['cpu'].
                     , bounds=(0, 100),title_size=14, height=260)
 
 # %%
+json_file = 's1_2023_timeseries_ant.json'  # Replace with your JSON file path
+df = pd.read_json(json_file)
+# 2. Convert the date columns to datetime objects
+df['date1'] = pd.to_datetime(df['date1'], format='%y-%m-%d')
+df['date2'] = pd.to_datetime(df['date2'], format='%y-%m-%d')
+
+# We'll "melt" the dataframe so that both date columns are in a single column, making it easier to plot
+melted_df = df.melt(id_vars=['pairs'], value_vars=['date1', 'date2'], value_name='date').drop(columns='variable')
+# Group by date and get the count
+date_counts = melted_df.groupby('date').size().reset_index(name='count')
+# Use the blue color palette from colorcet and get 12 uniformly spread values
+blue_palette = cc.glasbey_cool[::-1]
+# Create a dictionary that maps each month to a shade of blue
+month_to_color = {month: blue_palette[(month-1) * len(blue_palette) // 12] for month in range(1, 13)}
+# Assign colors based on the month
+date_counts['color'] = date_counts['date'].dt.month.map(month_to_color)
+
+
+# Define a custom hook to modify the underlying Bokeh plot's x-axis ticks using DatetimeTickFormatter
+def adjust_ticks(plot, element):
+    plot.handles['xaxis'].formatter = DatetimeTickFormatter(
+        days="%d  %m  %Y",
+        months="%d  %m  %Y",
+        years="%d %m %Y"
+    )
+    
+ant_barplot = date_counts.hvplot.bar(x='date', y='count',
+                                     width=1000, height=350,
+                                     title="Number of times an S1 image is involved in a pair", 
+                                     rot=90, line_alpha=0,color='color').opts(hooks=[adjust_ticks])
+
+# %%
 ant_intro = pn.pane.Markdown("""
- ## ANTARCTICA
  
 - Data processed on **OATES**.
 - Starting date : **08/17/2023**.
@@ -139,8 +170,11 @@ ant_intro = pn.pane.Markdown("""
 - what about time range
 
  """)
+ant_first_raw = pn.Row(pn.Spacer(width=80), ant_intro)
+ant_second_raw = pn.Row(pn.Spacer(width=80), ant_box1,pn.Spacer(width=80),ant_gauge)
+ant_third_raw = pn.Row(pn.Spacer(width=70), ant_barplot)
 
-ant_layout=pn.Column(ant_intro,pn.Row(pn.Spacer(width=80),ant_box1,pn.Spacer(width=80),ant_gauge))
+ant_layout=pn.Column(ant_first_raw,ant_second_raw,ant_third_raw)
 
 # %%
 ##https://towardsdatascience.com/how-to-deploy-a-panel-visualization-dashboard-to-github-pages-2f520fd8660
@@ -168,19 +202,52 @@ gre_box1 = pn.Column(
 gre_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(greenland['cpu'].iloc[-1])
                     , bounds=(0, 100),title_size=14, height=260)
 
+
+
+# %%
+json_file = 's1_2023_timeseries_gre.json'  # Replace with your JSON file path
+df = pd.read_json(json_file)
+# 2. Convert the date columns to datetime objects
+df['date1'] = pd.to_datetime(df['date1'], format='%y-%m-%d')
+df['date2'] = pd.to_datetime(df['date2'], format='%y-%m-%d')
+
+# We'll "melt" the dataframe so that both date columns are in a single column, making it easier to plot
+melted_df = df.melt(id_vars=['pairs'], value_vars=['date1', 'date2'], value_name='date').drop(columns='variable')
+# Group by date and get the count
+date_counts = melted_df.groupby('date').size().reset_index(name='count')
+# Use the blue color palette from colorcet and get 12 uniformly spread values
+blue_palette = cc.glasbey_cool[::-1]
+# Create a dictionary that maps each month to a shade of blue
+month_to_color = {month: blue_palette[(month-1) * len(blue_palette) // 12] for month in range(1, 13)}
+# Assign colors based on the month
+date_counts['color'] = date_counts['date'].dt.month.map(month_to_color)
+
+
+gre_barplot = date_counts.hvplot.bar(x='date', y='count',
+                                     width=1000, height=350,
+                                     title="Number of times an S1 image is involved in a pair", 
+                                     rot=90, line_alpha=0,color='color').opts(hooks=[adjust_ticks])
+
+# %%
 gre_intro = pn.pane.Markdown("""
- ## GREENLAND
  
-- Data processed on **HOBBS**jupyter_bokeh.
+- Data processed on **HOBBS**.
 - Starting date : **08/17/2023**.
 - Number of pairs to process: **3636**
  """)
 
-gre_layout = pn.Column(gre_intro,pn.Row(pn.Spacer(width=80),gre_box1,pn.Spacer(width=80),gre_gauge))
+gre_first_raw = pn.Row(pn.Spacer(width=80), gre_intro)
+gre_second_raw = pn.Row(pn.Spacer(width=80), gre_box1,pn.Spacer(width=80),gre_gauge)
+gre_third_raw = pn.Row(pn.Spacer(width=70), gre_barplot)
 
+gre_layout=pn.Column(gre_first_raw,gre_second_raw,gre_third_raw)
 
 # %%
-pn.Row(ant_layout,gre_layout).servable()
+
+tabs = pn.Tabs(('ANTARCTICA',ant_layout), ('GREENLAND',gre_layout))
+tabs.servable()
+
+# %%
 
 # %%
 
