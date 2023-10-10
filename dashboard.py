@@ -59,7 +59,7 @@ df_gre ['figure']=greenland['figure']/greenland['pairs']*100
 ant_box1 = pn.Column(
     *[
         pn.Row(
-            pn.panel(col, width=70, margin=(-10, 0, 0, 0)),
+            pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
             pn.indicators.Progress(
                 width=300,
                 value=int(df_ant[col].iloc[-1]),
@@ -100,7 +100,7 @@ ant_layout=pn.Column(ant_intro,pn.Row(pn.Spacer(width=80),ant_box1,pn.Spacer(wid
 gre_box1 = pn.Column(
     *[
         pn.Row(
-            pn.panel(col, width=70, margin=(-10, 0, 0, 0)),
+            pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
             pn.indicators.Progress(
                 width=300,
                 value=int(df_gre[col].iloc[-1]),
