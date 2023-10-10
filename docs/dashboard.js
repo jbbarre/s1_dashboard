@@ -75,7 +75,7 @@ hv.extension('bokeh')
 pn.extension('echarts','mathjax',comms="vscode")
 
 # %%
-antarctica = pd.read_json('antarctica_2023_12d.json')
+antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/antarctica_2023_12d.json')
 antarctica.tail()
 
 # %%
@@ -90,7 +90,7 @@ df_ant ['geo']=antarctica['geo']/antarctica['pairs']*100
 df_ant ['figure']=antarctica['figure']/antarctica['pairs']*100
 
 # %%
-greenland = pd.read_json('greenland_2023_12d.json')
+greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/greenland_2023_12d.json')
 greenland.tail()
 
 # %%
