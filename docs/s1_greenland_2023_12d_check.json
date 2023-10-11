@@ -1,0 +1,30 @@
+[
+    {
+        "date": "10-11-23 08:34:32",
+        "pairs": 3636,
+        "sdh": 2705,
+        "slc": 1907,
+        "ampcor input": 1055,
+        "ampcor ouput": 729,
+        "offmap": 33,
+        "interferogram": 31,
+        "deramp": 2,
+        "geo": 33,
+        "figure": 32,
+        "cpu": 0.8
+    },
+    {
+        "date": "10-11-23 12:00:02",
+        "pairs": 3636,
+        "sdh": 2705,
+        "slc": 1907,
+        "ampcor input": 1055,
+        "ampcor ouput": 729,
+        "offmap": 33,
+        "interferogram": 31,
+        "deramp": 2,
+        "geo": 33,
+        "figure": 32,
+        "cpu": 0.9
+    }
+]
