@@ -26,5 +26,19 @@
         "geo": 0,
         "figure": 0,
         "cpu": 0.8
+    },
+    {
+        "date": "10-12-23 00:00:17",
+        "pairs": 4969,
+        "sdh": 9,
+        "slc": 3612,
+        "ampcor input": 1525,
+        "ampcor ouput": 1524,
+        "offmap": 0,
+        "interferogram": 0,
+        "deramp": 0,
+        "geo": 0,
+        "figure": 0,
+        "cpu": 1.1
     }
 ]
