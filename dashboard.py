@@ -18,119 +18,296 @@ import pandas as pd
 import panel as pn
 import holoviews as hv
 import hvplot.pandas
-from bokeh.models import DatetimeTickFormatter
+from bokeh.plotting import figure, output_notebook, show
+from bokeh.models import DatetimeTickFormatter, FixedTicker
+from datetime import datetime
 
 import colorcet as cc
 
-hv.extension('bokeh')
-pn.extension('echarts','mathjax',comms="vscode")
+hv.extension("bokeh")
+pn.extension("echarts", "mathjax", comms="vscode")
+
 
 # %%
-antarctica = pd.read_json('antarctica_2023_12d.json')
-antarctica.tail()
+def construct_df(data):
+    df = pd.DataFrame()
+    for col in [
+        "slc",
+        "ampcor input",
+        "ampcor ouput",
+        "offmap",
+        "interferogram",
+        "deramp",
+        "geo",
+        "figure",
+    ]:
+        factor = 1 if col == "slc" else 1
+        df[col] = data[col] / (factor * data["pairs"]) * 100
+    return df
+
 
 # %%
-df_ant = pd.DataFrame()
-df_ant ['slc']=antarctica['slc']/(2*antarctica['pairs'])*100 # *2: we have two slc per pair
-df_ant ['ampcor input']=antarctica['ampcor input']/antarctica['pairs']*100
-df_ant ['ampcor ouput']=antarctica['ampcor ouput']/antarctica['pairs']*100
-df_ant ['offmap']=antarctica['offmap']/antarctica['pairs']*100
-df_ant ['interferogram']=antarctica['interferogram']/antarctica['pairs']*100
-df_ant ['deramp']=antarctica['deramp']/antarctica['pairs']*100
-df_ant ['geo']=antarctica['geo']/antarctica['pairs']*100
-df_ant ['figure']=antarctica['figure']/antarctica['pairs']*100
+def create_progress_column(df, columns, icesheet):
+    return pn.Column(
+        *[
+            pn.Row(
+                pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
+                pn.indicators.Progress(
+                    width=240,
+                    value=int(df[col].iloc[-1]),
+                    margin=(-5, 0, -15, 0),
+                    bar_color="success",
+                ),
+                pn.panel(
+                    f"{icesheet[col].iloc[-1]} / {icesheet['pairs'].iloc[-1]}",
+                    margin=(-10, 0, 0, 10),
+                ),
+            )
+            for col in columns
+        ]
+    )
+
 
 # %%
-greenland = pd.read_json('greenland_2023_12d.json')
-greenland.tail()
+def create_bar_plot(data):
+    df = data.copy()
+    df["date1"] = pd.to_datetime(df["date1"], format="%y-%m-%d")
+    df["date2"] = pd.to_datetime(df["date2"], format="%y-%m-%d")
+    melted_df = df.melt(
+        id_vars=["pairs"], value_vars=["date1", "date2"], value_name="date"
+    ).drop(columns="variable")
+
+    unique_dates = melted_df["date"].drop_duplicates().reset_index(drop=True).to_frame()
+    unique_dates["count"] = 1
+    unique_dates["month"] = unique_dates["date"].dt.month
+    month_to_color = {
+        month: cc.glasbey_cool[::-1][(month - 1) * len(cc.glasbey_cool[::-1]) // 13]
+        for month in range(1, 13)
+    }
+    unique_dates["color"] = unique_dates["month"].map(month_to_color)
+
+    bar = figure(
+        x_axis_type="datetime",
+        height=190,
+        width=900,
+        x_range=(datetime(2022, 12, 1), datetime(2023, 12, 31)),
+    )
+    bar_width_days = 0.5
+    bar_width_ms = bar_width_days * 24 * 60 * 60 * 1000
+    bar.vbar(
+        x=unique_dates["date"],
+        top=unique_dates["count"],
+        width=bar_width_ms,
+        color=unique_dates["color"],
+    )
+    monthly_ticks = [datetime(2023, month, 1) for month in range(1, 13)]
+    bar.xaxis.ticker = FixedTicker(
+        ticks=[tick.timestamp() * 1000 for tick in monthly_ticks]
+    )
+    bar.xaxis.formatter = DatetimeTickFormatter(months=["%B "])
+    bar.yaxis.major_tick_line_color = None
+    bar.yaxis.minor_tick_line_color = None
+    bar.yaxis.major_label_text_font_size = "0pt"
+    bar.ygrid.visible = False
+
+    return bar
+
 
 # %%
-df_gre = pd.DataFrame()
-df_gre ['slc']=greenland['slc']/(2*greenland['pairs'])*100 # *2: we hav two slc per pair
-df_gre ['ampcor input']=greenland['ampcor input']/greenland['pairs']*100
-df_gre ['ampcor ouput']=greenland['ampcor ouput']/greenland['pairs']*100
-df_gre ['offmap']=greenland['offmap']/greenland['pairs']*100
-df_gre ['interferogram']=greenland['interferogram']/greenland['pairs']*100
-df_gre ['deramp']=greenland['deramp']/greenland['pairs']*100
-df_gre ['geo']=greenland['geo']/greenland['pairs']*100
-df_gre ['figure']=greenland['figure']/greenland['pairs']*100
+# Gauges for CPU WORKLOAD
+def create_gauge_with_label(label, value, bounds=(0, 100), title_size=11, height=190):
+    text_pane = pn.pane.Markdown(
+        f"### **{label}**", align="center", margin=(-29, 0, 0, 60)
+    )
+    gauge = pn.indicators.Gauge(
+        name="CPU USAGE",
+        value=round(value),
+        bounds=bounds,
+        title_size=title_size,
+        height=height,
+        margin=(0, -65, 0, 0),
+    )
+    return pn.Column(gauge, text_pane)
+
 
 # %%
-ant_box1 = pn.Column(
-    *[
-        pn.Row(
-            pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
-            pn.indicators.Progress(
-                width=300,
-                value=int(df_ant[col].iloc[-1]),
-                margin=(0, 0, -10, 0),
-                bar_color='secondary',
-            ),
-            pn.panel(
-                f'{antarctica[col].iloc[-1]} / {antarctica["pairs"].iloc[-1]}',
-                margin=(-10, 0, 0, 10),
-            ),
-        )
-        for col in df_ant.columns
-    ]
+antarctica = pd.read_json(
+    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json"
+)
+greenland = pd.read_json(
+    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_check.json"
+)
+ant_dates_df = pd.read_json(
+    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json"
+)
+gre_dates_df = pd.read_json(
+    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json"
 )
 
-ant_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(antarctica['cpu'].iloc[-1])
-                    , bounds=(0, 100),title_size=14, height=260)
+# antarctica = pd.read_json('./docs/s1_antarctica_2023_12d_check.json')
+# greenland = pd.read_json('./docs/s1_greenland_2023_12d_check.json')
+# ant_dates_df = pd.read_json('./docs/s1_antarctica_2023_12d_dates.json')
+# gre_dates_df = pd.read_json('./docs/s1_greenland_2023_12d_dates.json')
+
+df_ant = construct_df(antarctica)
+df_gre = construct_df(greenland)
 
 # %%
-ant_intro = pn.pane.Markdown("""
- ## ANTARCTICA
- 
-- Data processed on **OATES**.
-- Starting date : **08/17/2023**.
-- Number of pairs to process: **4969**
-- location of data(path): xxxxx
-- which track is processed
-- what about time range
-
- """)
-
-ant_layout=pn.Column(ant_intro,pn.Row(pn.Spacer(width=80),ant_box1,pn.Spacer(width=80),ant_gauge))
+# create progress bar
+ant_progress_col1 = create_progress_column(df_ant, df_ant.columns[0:4], antarctica)
+ant_progress_col2 = create_progress_column(df_ant, df_ant.columns[4:], antarctica)
+# create Bar plot for time serie
+ant_bar = create_bar_plot(ant_dates_df)
 
 # %%
-##https://towardsdatascience.com/how-to-deploy-a-panel-visualization-dashboard-to-github-pages-2f520fd8660
+oates = create_gauge_with_label("OATES", round(antarctica["cpu_oates"].iloc[-1]))
+bakutis = create_gauge_with_label("BAKUTIS", round(antarctica["cpu_bakutis"].iloc[-1]))
+pennell = create_gauge_with_label("PENNELL", round(antarctica["cpu_pennell"].iloc[-1]))
+mawson = create_gauge_with_label("MAWSON", round(antarctica["cpu_mawson"].iloc[-1]))
+
+ant_gauges = pn.Row(oates, bakutis, pennell, mawson)
 
 # %%
-gre_box1 = pn.Column(
-    *[
+ant_intro = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(
+            f""" 
+            ## ANTARCTICA: `{antarctica['pairs'].values[0]}` PAIRS IN PROCESS
+            """
+        ),
         pn.Row(
-            pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
-            pn.indicators.Progress(
-                width=300,
-                value=int(df_gre[col].iloc[-1]),
-                margin=(0, 0, -10, 0),
-                bar_color='secondary',
+            pn.Spacer(width=80),
+            pn.pane.Markdown(
+                f""" 
+                ### Data Location: `/u/oates-r0/eric/SENTINEL1`
+                """,
+                margin=(-10, 0, 0, 0),
             ),
-            pn.panel(
-                f"{greenland[col].iloc[-1]} / {greenland['pairs'].iloc[-1]}",
-                margin=(-10, 0, 0, 10),
+        ),
+        pn.Row(
+            pn.Spacer(width=80),
+            pn.pane.Markdown(
+                f""" 
+                ### Time Range in process: `{ant_dates_df.date1.min()} to {ant_dates_df.date1.max()}`
+                """,
+                margin=(-5, 0, 0, 0),
             ),
-        )
-        for col in df_gre.columns
-    ]
+        ),
+    )
 )
 
-gre_gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(greenland['cpu'].iloc[-1])
-                    , bounds=(0, 100),title_size=14, height=260)
+ant_first_raw = ant_intro
+ant_second_raw = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(f"## Progress", margin=(0, 0, 0, 25)),
+        pn.Row(
+            pn.Spacer(width=80),
+            ant_progress_col1,
+            pn.Spacer(width=80),
+            ant_progress_col2,
+        ),
+    )
+)
+ant_third_raw = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(f"## Images Processed", margin=(0, 0, 0, 25)),
+        pn.Row(pn.Spacer(width=70), ant_bar),
+    )
+)
+ant_forth_raw = pn.Row(
+    pn.Column(pn.pane.Markdown(f"## CPU Workload", margin=(0, 0, 0, 25)), ant_gauges)
+)
 
-gre_intro = pn.pane.Markdown("""
- ## GREENLAND
- 
-- Data processed on **HOBBS**jupyter_bokeh.
-- Starting date : **08/17/2023**.
-- Number of pairs to process: **3636**
- """)
+ant_layout = pn.Column(
+    ant_first_raw,
+    pn.Spacer(height=15),
+    ant_second_raw,
+    pn.Spacer(height=15),
+    ant_third_raw,
+    pn.Spacer(height=15),
+    ant_forth_raw,
+)
 
-gre_layout = pn.Column(gre_intro,pn.Row(pn.Spacer(width=80),gre_box1,pn.Spacer(width=80),gre_gauge))
+# %%
+gre_progress_col1 = create_progress_column(df_gre, df_gre.columns[0:4], greenland)
+gre_progress_col2 = create_progress_column(df_gre, df_gre.columns[4:], greenland)
+gre_bar = create_bar_plot(gre_dates_df)
 
 
 # %%
-pn.Row(ant_layout,gre_layout).servable()
+
+hobbs = create_gauge_with_label("HOBBS", round(greenland["cpu_hobbs"].iloc[-1]))
+bakutis = create_gauge_with_label("BAKUTIS", round(greenland["cpu_bakutis"].iloc[-1]))
+pennell = create_gauge_with_label("PENNELL", round(greenland["cpu_pennell"].iloc[-1]))
+mawson = create_gauge_with_label("MAWSON", round(greenland["cpu_mawson"].iloc[-1]))
+
+gre_gauges = pn.Row(hobbs)
+
+# %%
+gre_intro = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(
+            f""" 
+            ## GREENLAND: `{greenland['pairs'].values[0]}` PAIRS IN PROCESS
+            """
+        ),
+        pn.Row(
+            pn.Spacer(width=80),
+            pn.pane.Markdown(
+                f""" 
+                ### Data Location: `/u/hobbs-r1/eric/SENTINEL1_greenland`
+                """,
+                margin=(-10, 0, 0, 0),
+            ),
+        ),
+        pn.Row(
+            pn.Spacer(width=80),
+            pn.pane.Markdown(
+                f""" 
+                ### Time Range in process: `{gre_dates_df.date1.min()} to {gre_dates_df.date1.max()}`
+                """,
+                margin=(-5, 0, 0, 0),
+            ),
+        ),
+    )
+)
+gre_first_raw = gre_intro
+gre_second_raw = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(f"## Progress", margin=(0, 0, 0, 25)),
+        pn.Row(
+            pn.Spacer(width=80),
+            gre_progress_col1,
+            pn.Spacer(width=80),
+            gre_progress_col2,
+        ),
+    )
+)
+gre_third_raw = pn.Row(
+    pn.Column(
+        pn.pane.Markdown(f"## Images Processed", margin=(0, 0, 0, 25)),
+        pn.Row(pn.Spacer(width=70), gre_bar),
+    )
+)
+gre_forth_raw = pn.Row(
+    pn.Column(pn.pane.Markdown(f"## CPU Workload", margin=(0, 0, 0, 25)), gre_gauges)
+)
+
+gre_layout = pn.Column(
+    gre_first_raw,
+    pn.Spacer(height=15),
+    gre_second_raw,
+    pn.Spacer(height=15),
+    gre_third_raw,
+    pn.Spacer(height=15),
+    gre_forth_raw,
+)
+
+# %%
+tabs = pn.Tabs(("ANTARCTICA", ant_layout), ("GREENLAND", gre_layout))
+# tabs.servable(title='MEaSUREs')
+tabs.show(title="MEaSUREs")
+
+# %%
 
 # %%
