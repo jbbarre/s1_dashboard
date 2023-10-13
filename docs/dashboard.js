@@ -90,7 +90,7 @@ def construct_df(data):
         "geo",
         "figure",
     ]:
-        factor = 2 if col == "slc" else 1
+        factor = 1 if col == "slc" else 1
         df[col] = data[col] / (factor * data["pairs"]) * 100
     return df
 
