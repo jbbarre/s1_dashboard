@@ -189,7 +189,7 @@ try:
 except ValueError as e:
     print(f"Error reading JSON: {e}")
 try:
-    gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json', lines=True)
+    gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json')
 except ValueError as e:
     print(f"Error reading JSON: {e}") 
 
