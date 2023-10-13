@@ -175,10 +175,23 @@ def create_gauge_with_label(label, value, bounds=(0, 100), title_size=11, height
 
 
 # %%
-antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json', lines=True)
-greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_check.json', lines=True)
-ant_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json', lines=True)
-gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json', lines=True)
+
+try:
+    antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json', lines=True)
+except ValueError as e:
+    print(f"Error reading JSON: {e}")
+try:
+    greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_check.json', lines=True)
+except ValueError as e:
+    print(f"Error reading JSON: {e}")
+try:
+    ant_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json', lines=True)
+except ValueError as e:
+    print(f"Error reading JSON: {e}")
+try:
+    gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json', lines=True)
+except ValueError as e:
+    print(f"Error reading JSON: {e}") 
 
 #antarctica = pd.read_json('./docs/s1_antarctica_2023_12d_check.json')
 #greenland = pd.read_json('./docs/s1_greenland_2023_12d_check.json')
