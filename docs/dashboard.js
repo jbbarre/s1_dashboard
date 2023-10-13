@@ -243,7 +243,7 @@ ant_intro = pn.Row(
 
 ant_first_raw = ant_intro
 ant_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), ant_progress_col1,pn.Spacer(width=80),ant_progress_col2)))
-ant_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images Processed', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), ant_bar)))
+ant_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images processed by AMPCOR', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), ant_bar)))
 ant_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),ant_gauges))
 
 ant_layout=pn.Column(ant_first_raw,pn.Spacer(height=15),ant_second_raw, pn.Spacer(height=15),ant_third_raw,pn.Spacer(height=15),ant_forth_raw)
@@ -289,7 +289,7 @@ gre_intro = pn.Row(
     ))
 gre_first_raw = gre_intro
 gre_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), gre_progress_col1,pn.Spacer(width=80),gre_progress_col2)))
-gre_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images Processed', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), gre_bar)))
+gre_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images processed by AMPCOR', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), gre_bar)))
 gre_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),gre_gauges))
 
 gre_layout=pn.Column(gre_first_raw,pn.Spacer(height=15),gre_second_raw, pn.Spacer(height=15),gre_third_raw,pn.Spacer(height=15),gre_forth_raw)
