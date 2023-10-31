@@ -24,8 +24,8 @@ from datetime import datetime
 
 import colorcet as cc
 
-hv.extension("bokeh")
-pn.extension("echarts", "mathjax", comms="vscode")
+hv.extension('bokeh')
+pn.extension('echarts','mathjax',comms="vscode")
 
 
 # %%
@@ -41,13 +41,13 @@ def construct_df(data):
         "geo",
         "figure",
     ]:
-        factor = 1 if col == "slc" else 1
-        df[col] = data[col] / (factor * data["pairs"]) * 100
+        factor = 2 if col == "slc" else 1
+        df[col] = data[col] / (factor * (data["pairs"]- data["sdv"])) * 100
     return df
 
 
 # %%
-def create_progress_column(df, columns, icesheet):
+def create_progress_column(df,columns,icesheet):
     return pn.Column(
         *[
             pn.Row(
@@ -56,16 +56,17 @@ def create_progress_column(df, columns, icesheet):
                     width=240,
                     value=int(df[col].iloc[-1]),
                     margin=(-5, 0, -15, 0),
-                    bar_color="success",
+                    bar_color='success',
                 ),
                 pn.panel(
-                    f"{icesheet[col].iloc[-1]} / {icesheet['pairs'].iloc[-1]}",
+                    f"{icesheet[col].iloc[-1]} / {round(icesheet['pairs'].iloc[-1] - icesheet['sdv'].iloc[-1])} ",
                     margin=(-10, 0, 0, 10),
                 ),
             )
             for col in columns
         ]
     )
+
 
 
 # %%
@@ -113,200 +114,126 @@ def create_bar_plot(data):
     return bar
 
 
+
 # %%
 # Gauges for CPU WORKLOAD
 def create_gauge_with_label(label, value, bounds=(0, 100), title_size=11, height=190):
-    text_pane = pn.pane.Markdown(
-        f"### **{label}**", align="center", margin=(-29, 0, 0, 60)
-    )
-    gauge = pn.indicators.Gauge(
-        name="CPU USAGE",
-        value=round(value),
-        bounds=bounds,
-        title_size=title_size,
-        height=height,
-        margin=(0, -65, 0, 0),
-    )
+    text_pane = pn.pane.Markdown(f'### **{label}**', align='center', margin=(-29,0,0,60))
+    gauge = pn.indicators.Gauge(name='CPU USAGE', value=round(value), 
+                                bounds=bounds, title_size=title_size, height=height, margin=(0,-65,0,0))
     return pn.Column(gauge, text_pane)
 
 
-# %%
-antarctica = pd.read_json(
-    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json"
-)
-greenland = pd.read_json(
-    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_check.json"
-)
-ant_dates_df = pd.read_json(
-    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json"
-)
-gre_dates_df = pd.read_json(
-    "https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json"
-)
 
-# antarctica = pd.read_json('./docs/s1_antarctica_2023_12d_check.json')
-# greenland = pd.read_json('./docs/s1_greenland_2023_12d_check.json')
-# ant_dates_df = pd.read_json('./docs/s1_antarctica_2023_12d_dates.json')
-# gre_dates_df = pd.read_json('./docs/s1_greenland_2023_12d_dates.json')
+# %%
+#antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json')
+#greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/docs/s1_greenland_2023_12d_check.json')
+#ant_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json')
+#gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json')
+
+antarctica = pd.read_json('./docs/s1_antarctica_2023_12d_check.json')
+greenland = pd.read_json('./docs/s1_greenland_2023_12d_check.json')
+ant_dates_df = pd.read_json('./docs/s1_antarctica_2023_12d_dates.json')
+gre_dates_df = pd.read_json('./docs/s1_greenland_2023_12d_dates.json')
 
 df_ant = construct_df(antarctica)
 df_gre = construct_df(greenland)
 
 # %%
-# create progress bar
-ant_progress_col1 = create_progress_column(df_ant, df_ant.columns[0:4], antarctica)
-ant_progress_col2 = create_progress_column(df_ant, df_ant.columns[4:], antarctica)
-# create Bar plot for time serie
+#create progress bar
+ant_progress_col1 = create_progress_column(df_ant,df_ant.columns[0:4],antarctica)
+ant_progress_col2 = create_progress_column(df_ant,df_ant.columns[4:],antarctica)
+#create Bar plot for time serie
 ant_bar = create_bar_plot(ant_dates_df)
 
 # %%
-oates = create_gauge_with_label("OATES", round(antarctica["cpu_oates"].iloc[-1]))
-bakutis = create_gauge_with_label("BAKUTIS", round(antarctica["cpu_bakutis"].iloc[-1]))
-pennell = create_gauge_with_label("PENNELL", round(antarctica["cpu_pennell"].iloc[-1]))
-mawson = create_gauge_with_label("MAWSON", round(antarctica["cpu_mawson"].iloc[-1]))
+oates = create_gauge_with_label('OATES', round(antarctica['cpu_oates'].iloc[-1]))
+bakutis = create_gauge_with_label('BAKUTIS', round(antarctica['cpu_bakutis'].iloc[-1]))
+pennell = create_gauge_with_label('PENNELL', round(antarctica['cpu_pennell'].iloc[-1]))
+mawson = create_gauge_with_label('MAWSON', round(antarctica['cpu_mawson'].iloc[-1]))
 
-ant_gauges = pn.Row(oates, bakutis, pennell, mawson)
+ant_gauges= pn.Row(oates,bakutis,pennell,mawson)
 
 # %%
 ant_intro = pn.Row(
     pn.Column(
-        pn.pane.Markdown(
-            f""" 
-            ## ANTARCTICA: `{antarctica['pairs'].values[0]}` PAIRS IN PROCESS
+        pn.pane.Markdown(f""" 
+            ## ANTARCTICA: `{round(antarctica['pairs'].iloc[-1] - antarctica['sdv'].iloc[-1])}` PAIRS IN PROCESS
             """
         ),
         pn.Row(
             pn.Spacer(width=80),
-            pn.pane.Markdown(
-                f""" 
+            
+            pn.pane.Markdown(f""" 
                 ### Data Location: `/u/oates-r0/eric/SENTINEL1`
-                """,
-                margin=(-10, 0, 0, 0),
-            ),
+                """, margin=(-10,0,0,0))
         ),
         pn.Row(
             pn.Spacer(width=80),
-            pn.pane.Markdown(
-                f""" 
+            
+            pn.pane.Markdown(f""" 
                 ### Time Range in process: `{ant_dates_df.date1.min()} to {ant_dates_df.date1.max()}`
-                """,
-                margin=(-5, 0, 0, 0),
-            ),
+                """, margin=(-5,0,0,0))
         ),
-    )
-)
+    ))
 
 ant_first_raw = ant_intro
-ant_second_raw = pn.Row(
-    pn.Column(
-        pn.pane.Markdown(f"## Progress", margin=(0, 0, 0, 25)),
-        pn.Row(
-            pn.Spacer(width=80),
-            ant_progress_col1,
-            pn.Spacer(width=80),
-            ant_progress_col2,
-        ),
-    )
-)
-ant_third_raw = pn.Row(
-    pn.Column(
-        pn.pane.Markdown(f"## Images Processed", margin=(0, 0, 0, 25)),
-        pn.Row(pn.Spacer(width=70), ant_bar),
-    )
-)
-ant_forth_raw = pn.Row(
-    pn.Column(pn.pane.Markdown(f"## CPU Workload", margin=(0, 0, 0, 25)), ant_gauges)
-)
+ant_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), ant_progress_col1,pn.Spacer(width=80),ant_progress_col2)))
+ant_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'##  Images processed by AMPCOR', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), ant_bar)))
+ant_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),ant_gauges))
 
-ant_layout = pn.Column(
-    ant_first_raw,
-    pn.Spacer(height=15),
-    ant_second_raw,
-    pn.Spacer(height=15),
-    ant_third_raw,
-    pn.Spacer(height=15),
-    ant_forth_raw,
-)
+ant_layout=pn.Column(ant_first_raw,pn.Spacer(height=15),ant_second_raw, pn.Spacer(height=15),ant_third_raw,pn.Spacer(height=15),ant_forth_raw)
 
 # %%
-gre_progress_col1 = create_progress_column(df_gre, df_gre.columns[0:4], greenland)
-gre_progress_col2 = create_progress_column(df_gre, df_gre.columns[4:], greenland)
+gre_progress_col1 = create_progress_column(df_gre,df_gre.columns[0:4],greenland)
+gre_progress_col2 = create_progress_column(df_gre,df_gre.columns[4:],greenland)
 gre_bar = create_bar_plot(gre_dates_df)
 
 
 # %%
 
-hobbs = create_gauge_with_label("HOBBS", round(greenland["cpu_hobbs"].iloc[-1]))
-bakutis = create_gauge_with_label("BAKUTIS", round(greenland["cpu_bakutis"].iloc[-1]))
-pennell = create_gauge_with_label("PENNELL", round(greenland["cpu_pennell"].iloc[-1]))
-mawson = create_gauge_with_label("MAWSON", round(greenland["cpu_mawson"].iloc[-1]))
+hobbs = create_gauge_with_label('HOBBS', round(greenland['cpu_hobbs'].iloc[-1]))
+bakutis = create_gauge_with_label('BAKUTIS', round(greenland['cpu_bakutis'].iloc[-1]))
+pennell = create_gauge_with_label('PENNELL', round(greenland['cpu_pennell'].iloc[-1]))
+mawson = create_gauge_with_label('MAWSON', round(greenland['cpu_mawson'].iloc[-1]))
 
-gre_gauges = pn.Row(hobbs)
+gre_gauges= pn.Row(hobbs)
 
 # %%
 gre_intro = pn.Row(
     pn.Column(
-        pn.pane.Markdown(
-            f""" 
-            ## GREENLAND: `{greenland['pairs'].values[0]}` PAIRS IN PROCESS
+        pn.pane.Markdown(f""" 
+            ## GREENLAND: `{round(greenland['pairs'].iloc[-1] - greenland['sdv'].iloc[-1])}` PAIRS IN PROCESS
             """
         ),
         pn.Row(
             pn.Spacer(width=80),
-            pn.pane.Markdown(
-                f""" 
+            
+            pn.pane.Markdown(f""" 
                 ### Data Location: `/u/hobbs-r1/eric/SENTINEL1_greenland`
-                """,
-                margin=(-10, 0, 0, 0),
-            ),
+                """, margin=(-10,0,0,0))
         ),
         pn.Row(
             pn.Spacer(width=80),
-            pn.pane.Markdown(
-                f""" 
+            
+            pn.pane.Markdown(f""" 
                 ### Time Range in process: `{gre_dates_df.date1.min()} to {gre_dates_df.date1.max()}`
-                """,
-                margin=(-5, 0, 0, 0),
-            ),
+                """, margin=(-5,0,0,0))
         ),
-    )
-)
-gre_first_raw = gre_intro
-gre_second_raw = pn.Row(
-    pn.Column(
-        pn.pane.Markdown(f"## Progress", margin=(0, 0, 0, 25)),
-        pn.Row(
-            pn.Spacer(width=80),
-            gre_progress_col1,
-            pn.Spacer(width=80),
-            gre_progress_col2,
-        ),
-    )
-)
-gre_third_raw = pn.Row(
-    pn.Column(
-        pn.pane.Markdown(f"## Images Processed", margin=(0, 0, 0, 25)),
-        pn.Row(pn.Spacer(width=70), gre_bar),
-    )
-)
-gre_forth_raw = pn.Row(
-    pn.Column(pn.pane.Markdown(f"## CPU Workload", margin=(0, 0, 0, 25)), gre_gauges)
-)
+        
 
-gre_layout = pn.Column(
-    gre_first_raw,
-    pn.Spacer(height=15),
-    gre_second_raw,
-    pn.Spacer(height=15),
-    gre_third_raw,
-    pn.Spacer(height=15),
-    gre_forth_raw,
-)
+    ))
+gre_first_raw = gre_intro
+gre_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), gre_progress_col1,pn.Spacer(width=80),gre_progress_col2)))
+gre_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images Processed', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), gre_bar)))
+gre_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),gre_gauges))
+
+gre_layout=pn.Column(gre_first_raw,pn.Spacer(height=15),gre_second_raw, pn.Spacer(height=15),gre_third_raw,pn.Spacer(height=15),gre_forth_raw)
 
 # %%
-tabs = pn.Tabs(("ANTARCTICA", ant_layout), ("GREENLAND", gre_layout))
-# tabs.servable(title='MEaSUREs')
-tabs.show(title="MEaSUREs")
+tabs = pn.Tabs(('ANTARCTICA',ant_layout), ('GREENLAND',gre_layout))
+tabs.servable(title='MEaSUREs')
+#tabs.show(title='MEaSUREs')
 
 # %%
 
