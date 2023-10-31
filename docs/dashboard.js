@@ -15,7 +15,7 @@ async function startApplication() {
   self.pyodide.globals.set("sendPatch", sendPatch);
   console.log("Loaded!");
   await self.pyodide.loadPackage("micropip");
-  const env_spec = ['https://cdn.holoviz.org/panel/1.2.3/dist/wheels/bokeh-3.2.2-py3-none-any.whl', 'https://cdn.holoviz.org/panel/1.2.3/dist/wheels/panel-1.2.3-py3-none-any.whl', 'pyodide-http==0.2.1', 'pandas', 'holoviews']
+  const env_spec = ['https://cdn.holoviz.org/panel/1.2.3/dist/wheels/bokeh-3.2.2-py3-none-any.whl', 'https://cdn.holoviz.org/panel/1.2.3/dist/wheels/panel-1.2.3-py3-none-any.whl', 'pyodide-http==0.2.1', 'pandas', 'holoviews', 'hvplot']
   for (const pkg of env_spec) {
     let pkg_name;
     if (pkg.endsWith('.whl')) {
@@ -179,6 +179,7 @@ antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboar
 greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/docs/s1_greenland_2023_12d_check.json')
 ant_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json')
 gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json')
+
 
 df_ant = construct_df(antarctica)
 df_gre = construct_df(greenland)
