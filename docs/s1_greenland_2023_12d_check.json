@@ -10209,5 +10209,23 @@
         "cpu_bakutis": 98.9,
         "cpu_pennell": 100.0,
         "cpu_mawson": 0.7
+    },
+    {
+        "date": "11-08-23 04:03:47",
+        "pairs": 4356,
+        "sdv": 1042,
+        "slc": 2162,
+        "ampcor input": 1080,
+        "ampcor ouput": 987,
+        "offmap": 828,
+        "interferogram": 336,
+        "deramp": 490,
+        "geo": 653,
+        "figure": 626,
+        "cpu_oates": 15.3,
+        "cpu_hobbs": 9.8,
+        "cpu_bakutis": 100.0,
+        "cpu_pennell": 85.1,
+        "cpu_mawson": 0.7
     }
 ]
