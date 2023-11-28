@@ -17,10 +17,10 @@
 import pandas as pd
 import panel as pn
 import holoviews as hv
-import hvplot.pandas
 from bokeh.plotting import figure, output_notebook, show
 from bokeh.models import DatetimeTickFormatter, FixedTicker
 from datetime import datetime
+import param
 
 import colorcet as cc
 
@@ -32,14 +32,11 @@ pn.extension('echarts','mathjax',comms="vscode")
 def construct_df(data):
     df = pd.DataFrame()
     for col in [
-        "slc",
-        "ampcor input",
-        "ampcor ouput",
         "offmap",
         "interferogram",
-        "deramp",
         "geo",
         "figure",
+        "cleaned"
     ]:
         factor = 2 if col == "slc" else 1
         df[col] = data[col] / (factor * (data["pairs"]- data["sdv"])) * 100
@@ -53,7 +50,7 @@ def create_progress_column(df,columns,icesheet):
             pn.Row(
                 pn.panel(col, width=90, margin=(-10, 0, 0, 0)),
                 pn.indicators.Progress(
-                    width=240,
+                    width=200,
                     value=int(df[col].iloc[-1]),
                     margin=(-5, 0, -15, 0),
                     bar_color='success',
@@ -70,10 +67,13 @@ def create_progress_column(df,columns,icesheet):
 
 
 # %%
-def create_bar_plot(data):
+def create_vel_bar_plot(data):
     df = data.copy()
     df["date1"] = pd.to_datetime(df["date1"], format="%y-%m-%d")
     df["date2"] = pd.to_datetime(df["date2"], format="%y-%m-%d")
+    df=df[df["velocities"]==1]
+    ts_year= df["date1"].dt.year.max()
+        
     melted_df = df.melt(
         id_vars=["pairs"], value_vars=["date1", "date2"], value_name="date"
     ).drop(columns="variable")
@@ -81,17 +81,12 @@ def create_bar_plot(data):
     unique_dates = melted_df["date"].drop_duplicates().reset_index(drop=True).to_frame()
     unique_dates["count"] = 1
     unique_dates["month"] = unique_dates["date"].dt.month
-    month_to_color = {
-        month: cc.glasbey_cool[::-1][(month - 1) * len(cc.glasbey_cool[::-1]) // 13]
-        for month in range(1, 13)
-    }
-    unique_dates["color"] = unique_dates["month"].map(month_to_color)
 
     bar = figure(
         x_axis_type="datetime",
         height=190,
         width=900,
-        x_range=(datetime(2022, 12, 1), datetime(2023, 12, 31)),
+        x_range=(datetime(ts_year-1, 12, 1), datetime(ts_year, 12, 31)),
     )
     bar_width_days = 0.5
     bar_width_ms = bar_width_days * 24 * 60 * 60 * 1000
@@ -99,9 +94,8 @@ def create_bar_plot(data):
         x=unique_dates["date"],
         top=unique_dates["count"],
         width=bar_width_ms,
-        color=unique_dates["color"],
     )
-    monthly_ticks = [datetime(2023, month, 1) for month in range(1, 13)]
+    monthly_ticks = [datetime(ts_year, month, 1) for month in range(1, 13)]
     bar.xaxis.ticker = FixedTicker(
         ticks=[tick.timestamp() * 1000 for tick in monthly_ticks]
     )
@@ -114,7 +108,6 @@ def create_bar_plot(data):
     return bar
 
 
-
 # %%
 # Gauges for CPU WORKLOAD
 def create_gauge_with_label(label, value, bounds=(0, 100), title_size=11, height=190):
@@ -124,117 +117,137 @@ def create_gauge_with_label(label, value, bounds=(0, 100), title_size=11, height
     return pn.Column(gauge, text_pane)
 
 
-
 # %%
-#antarctica = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_check.json')
-#greenland = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/docs/s1_greenland_2023_12d_check.json')
-#ant_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_antarctica_2023_12d_dates.json')
-#gre_dates_df = pd.read_json('https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_greenland_2023_12d_dates.json')
+def process (df,df_dates,df_is,select,region):
+    
+    #create progress bar
+    progress_col1 = create_progress_column(df,df.columns[0:3],df_is)
+    progress_col2 = create_progress_column(df,df.columns[3:],df_is)
+    #create Bar plot for time serie
+    bar = create_vel_bar_plot(df_dates)
+    
+    oates = create_gauge_with_label('OATES', round(df_is['cpu_oates'].iloc[-1]))
+    bakutis = create_gauge_with_label('BAKUTIS', round(df_is['cpu_bakutis'].iloc[-1]))
+    pennell = create_gauge_with_label('PENNELL', 0)#round(antarctica['cpu_pennell'].iloc[-1]))
+    mawson = create_gauge_with_label('MAWSON', round(df_is['cpu_mawson'].iloc[-1]))
+    
+    if region=='antarctica':
+        data_path='`/u/oates-r0/eric/SENTINEL1`'
+    else:
+        data_path='`/u/hobbs-r1/eric/SENTINEL1_greenland`'
 
-antarctica = pd.read_json('./docs/s1_antarctica_2023_12d_check.json')
-greenland = pd.read_json('./docs/s1_greenland_2023_12d_check.json')
-ant_dates_df = pd.read_json('./docs/s1_antarctica_2023_12d_dates.json')
-gre_dates_df = pd.read_json('./docs/s1_greenland_2023_12d_dates.json')
-
-df_ant = construct_df(antarctica)
-df_gre = construct_df(greenland)
-
-# %%
-#create progress bar
-ant_progress_col1 = create_progress_column(df_ant,df_ant.columns[0:4],antarctica)
-ant_progress_col2 = create_progress_column(df_ant,df_ant.columns[4:],antarctica)
-#create Bar plot for time serie
-ant_bar = create_bar_plot(ant_dates_df)
-
-# %%
-oates = create_gauge_with_label('OATES', round(antarctica['cpu_oates'].iloc[-1]))
-bakutis = create_gauge_with_label('BAKUTIS', round(antarctica['cpu_bakutis'].iloc[-1]))
-pennell = create_gauge_with_label('PENNELL', round(antarctica['cpu_pennell'].iloc[-1]))
-mawson = create_gauge_with_label('MAWSON', round(antarctica['cpu_mawson'].iloc[-1]))
-
-ant_gauges= pn.Row(oates,bakutis,pennell,mawson)
-
-# %%
-ant_intro = pn.Row(
+    gauges= pn.Row(oates,bakutis,pennell,mawson)
+    
+    intro = pn.Row(
     pn.Column(
-        pn.pane.Markdown(f""" 
-            ## ANTARCTICA: `{round(antarctica['pairs'].iloc[-1] - antarctica['sdv'].iloc[-1])}` PAIRS IN PROCESS
-            """
+        pn.Row(
+            select   
         ),
         pn.Row(
-            pn.Spacer(width=80),
+            pn.Spacer(width=60),
             
             pn.pane.Markdown(f""" 
-                ### Data Location: `/u/oates-r0/eric/SENTINEL1`
+                ### Dataset: `{round(df_is['pairs'].iloc[-1] - df_is['sdv'].iloc[-1])}` pairs in process.
                 """, margin=(-10,0,0,0))
         ),
         pn.Row(
-            pn.Spacer(width=80),
+            pn.Spacer(width=60),
             
             pn.pane.Markdown(f""" 
-                ### Time Range in process: `{ant_dates_df.date1.min()} to {ant_dates_df.date1.max()}`
+                ### Data Location: {data_path}
+                """, margin=(-10,0,0,0))
+        ),
+        pn.Row(
+            pn.Spacer(width=60),
+            
+            pn.pane.Markdown(f""" 
+                ### Time Range in process: `{df_dates.date1.min()}` to `{df_dates.date1.max()}`
                 """, margin=(-5,0,0,0))
         ),
     ))
 
-ant_first_raw = ant_intro
-ant_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), ant_progress_col1,pn.Spacer(width=80),ant_progress_col2)))
-ant_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'##  Images processed by AMPCOR', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), ant_bar)))
-ant_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),ant_gauges))
+    first_raw = intro
+    #progress
+    second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=60),progress_col1,pn.Spacer(width=60),progress_col2)))
+    #avilable velocities
+    third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Available Velocities', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70),bar)))
+    #servers workload
+    forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## Servers Workload', margin=(0,0,0,25)),gauges))
+    #concatenation
+    layout=pn.Column(first_raw,pn.Spacer(height=15),second_raw, pn.Spacer(height=15),third_raw,pn.Spacer(height=15),forth_raw)
+    
+    return layout
 
-ant_layout=pn.Column(ant_first_raw,pn.Spacer(height=15),ant_second_raw, pn.Spacer(height=15),ant_third_raw,pn.Spacer(height=15),ant_forth_raw)
-
-# %%
-gre_progress_col1 = create_progress_column(df_gre,df_gre.columns[0:4],greenland)
-gre_progress_col2 = create_progress_column(df_gre,df_gre.columns[4:],greenland)
-gre_bar = create_bar_plot(gre_dates_df)
-
-
-# %%
-
-hobbs = create_gauge_with_label('HOBBS', round(greenland['cpu_hobbs'].iloc[-1]))
-bakutis = create_gauge_with_label('BAKUTIS', round(greenland['cpu_bakutis'].iloc[-1]))
-pennell = create_gauge_with_label('PENNELL', round(greenland['cpu_pennell'].iloc[-1]))
-mawson = create_gauge_with_label('MAWSON', round(greenland['cpu_mawson'].iloc[-1]))
-
-gre_gauges= pn.Row(hobbs)
 
 # %%
-gre_intro = pn.Row(
-    pn.Column(
-        pn.pane.Markdown(f""" 
-            ## GREENLAND: `{round(greenland['pairs'].iloc[-1] - greenland['sdv'].iloc[-1])}` PAIRS IN PROCESS
-            """
-        ),
-        pn.Row(
-            pn.Spacer(width=80),
-            
-            pn.pane.Markdown(f""" 
-                ### Data Location: `/u/hobbs-r1/eric/SENTINEL1_greenland`
-                """, margin=(-10,0,0,0))
-        ),
-        pn.Row(
-            pn.Spacer(width=80),
-            
-            pn.pane.Markdown(f""" 
-                ### Time Range in process: `{gre_dates_df.date1.min()} to {gre_dates_df.date1.max()}`
-                """, margin=(-5,0,0,0))
-        ),
+# Define a parameterized class
+class YearSelector(param.Parameterized):
+    year = param.Integer(default=2022) # Default year
+    region = param.String(default='antarctica')  # Default region
+
+    def get_file_name(self):           
+        file_name_check = './docs/s1_{}_{}_12d_check.json'.format(self.region, self.year)
+        #file_name_check = 'https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_{}_{}_12d_check.json'.format(self.region, self.year)
+        file_name_dates = './docs/s1_{}_{}_12d_dates.json'.format(self.region, self.year)
+        #file_name_dates = 'https://raw.githubusercontent.com/jbbarre/s1_dashboard/master/docs/s1_{}_{}_12d_dates.json'.format(self.region, self.year)
+        return file_name_check,file_name_dates
+
+# Create an instance of the class
+year_selector = YearSelector()
+
+def create_year_select(region_name):
+    return pn.widgets.Select(
+        name=f'Select Year for {region_name}',
+        options=[str(year) for year in range(2022, 2025)],
+        value=str(year_selector.year),
+        width =200
+    )
+
+# Create select boxes for Antarctica and Greenland
+ant_select = create_year_select('Antarctica')
+gre_select = create_year_select('Greenland')
+
+def update_year(event,region):
+    # Update the year and region
+    year_selector.year = int(event.new)
+    year_selector.region = region
+    # Fetch and process the data
+    file_name_check,file_name_dates = year_selector.get_file_name()
+    data = pd.read_json(file_name_check)
+    dates_df = pd.read_json(file_name_dates)
+    df = construct_df(data)
+    layout=process(df, dates_df, data, ant_select if region == 'antarctica' else gre_select,region)
+    # Update the tabs
+    if region == 'antarctica':
+        tabs[0] = ('ANTARCTICA', layout)
+    else:
+        tabs[1] = ('GREENLAND', layout)
         
+# Create callbacks for each region
+def ant_update_year(event):
+    update_year(event, 'antarctica')
 
-    ))
-gre_first_raw = gre_intro
-gre_second_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Progress', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=80), gre_progress_col1,pn.Spacer(width=80),gre_progress_col2)))
-gre_third_raw = pn.Row(pn.Column(pn.pane.Markdown(f'## Images Processed', margin=(0,0,0,25)),pn.Row(pn.Spacer(width=70), gre_bar)))
-gre_forth_raw= pn.Row(pn.Column(pn.pane.Markdown(f'## CPU Workload', margin=(0,0,0,25)),gre_gauges))
+def gre_update_year(event):
+    update_year(event, 'greenland')
 
-gre_layout=pn.Column(gre_first_raw,pn.Spacer(height=15),gre_second_raw, pn.Spacer(height=15),gre_third_raw,pn.Spacer(height=15),gre_forth_raw)
+# Link the select widget to the callback
+ant_select.param.watch(ant_update_year, 'value')
+gre_select.param.watch(gre_update_year, 'value')
 
-# %%
-tabs = pn.Tabs(('ANTARCTICA',ant_layout), ('GREENLAND',gre_layout))
+
+# Function to initialize data and layout for a given region
+def initialize_data_and_layout(region):
+    year_selector.region = region
+    data = pd.read_json(year_selector.get_file_name()[0])
+    dates_df = pd.read_json(year_selector.get_file_name()[1])
+    df = construct_df(data)
+    return process(df, dates_df, data, ant_select if region == 'antarctica' else gre_select,region)
+
+# Initialize data and create plots and pages
+ant_layout = initialize_data_and_layout('antarctica')
+gre_layout = initialize_data_and_layout('greenland')
+
+# Create and display tabs
+tabs = pn.Tabs(('ANTARCTICA', ant_layout), ('GREENLAND', gre_layout))
 tabs.servable(title='MEaSUREs')
 #tabs.show(title='MEaSUREs')
-
-# %%
-
-# %%

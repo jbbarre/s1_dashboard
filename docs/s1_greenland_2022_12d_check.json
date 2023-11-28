@@ -1,0 +1,30 @@
+[
+    {
+        "date": "11-27-23 09:15:13",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2419,
+        "interferogram": 67,
+        "geo": 2352,
+        "figure": 2335,
+        "cleaned": 2352,
+        "cpu_oates": 72.8,
+        "cpu_hobbs": 0.8,
+        "cpu_bakutis": 86.3,
+        "cpu_mawson": 81.8
+    },
+    {
+        "date": "11-28-23 00:34:36",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2419,
+        "interferogram": 67,
+        "geo": 2352,
+        "figure": 2335,
+        "cleaned": 2352,
+        "cpu_oates": 0.7,
+        "cpu_hobbs": 0.8,
+        "cpu_bakutis": 2.1,
+        "cpu_mawson": 82.7
+    }
+]
