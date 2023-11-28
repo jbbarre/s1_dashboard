@@ -71,8 +71,8 @@ def create_progress_column(df, columns, icesheet):
 # %%
 def create_vel_bar_plot(data):
     df = data.copy()
-    df["date1"] = pd.to_datetime(df["date1"], format="%y-%m-%d")
-    df["date2"] = pd.to_datetime(df["date2"], format="%y-%m-%d")
+    df["date1"] = pd.to_datetime(df["date1"], format="%Y-%m-%d")
+    df["date2"] = pd.to_datetime(df["date2"], format="%Y-%m-%d")
     df = df[df["velocities"] == 1]
     ts_year = df["date1"].dt.year.max()
 
@@ -264,8 +264,10 @@ def update_year(event, region):
     data = pd.read_json(file_name_check)
     dates_df = pd.read_json(file_name_dates)
     dates_df["date1"] = pd.to_datetime(dates_df["date1"], format="%y-%m-%d")
+    dates_df["date2"] = pd.to_datetime(dates_df["date2"], format="%y-%m-%d")
     # Remove the time component
     dates_df["date1"] = dates_df["date1"].dt.date
+    dates_df["date2"] = dates_df["date2"].dt.date
     df = construct_df(data)
     layout = process(
         df, dates_df, data, ant_select if region == "antarctica" else gre_select, region
@@ -297,8 +299,10 @@ def initialize_data_and_layout(region):
     data = pd.read_json(year_selector.get_file_name()[0])
     dates_df = pd.read_json(year_selector.get_file_name()[1])
     dates_df["date1"] = pd.to_datetime(dates_df["date1"], format="%y-%m-%d")
+    dates_df["date2"] = pd.to_datetime(dates_df["date2"], format="%y-%m-%d")
     # Remove the time component
     dates_df["date1"] = dates_df["date1"].dt.date
+    dates_df["date2"] = dates_df["date2"].dt.date
     df = construct_df(data)
     print(list(df.columns))
     return process(
