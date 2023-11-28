@@ -26,5 +26,50 @@
         "cpu_hobbs": 0.8,
         "cpu_bakutis": 2.1,
         "cpu_mawson": 82.7
+    },
+    {
+        "date": "11-28-23 02:42:57",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2419,
+        "interferogram": 67,
+        "geo": 2352,
+        "figure": 2335,
+        "cleaned": 2352,
+        "cubes": 0,
+        "cpu_oates": 9.5,
+        "cpu_hobbs": 0.8,
+        "cpu_bakutis": 78.8,
+        "cpu_mawson": 83.4
+    },
+    {
+        "date": "11-28-23 05:36:23",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2419,
+        "interferogram": 67,
+        "geo": 2352,
+        "figure": 2335,
+        "cleaned": 2352,
+        "cubes": 0,
+        "cpu_oates": 69.4,
+        "cpu_hobbs": 0.9,
+        "cpu_bakutis": 84.8,
+        "cpu_mawson": 82.0
+    },
+    {
+        "date": "11-28-23 05:57:29",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2419,
+        "interferogram": 67,
+        "geo": 2352,
+        "figure": 2335,
+        "cleaned": 2352,
+        "cubes": 1901,
+        "cpu_oates": 63.4,
+        "cpu_hobbs": 0.9,
+        "cpu_bakutis": 91.0,
+        "cpu_mawson": 94.3
     }
 ]
