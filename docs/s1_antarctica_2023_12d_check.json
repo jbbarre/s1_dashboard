@@ -2143,5 +2143,20 @@
         "cpu_hobbs": 1.0,
         "cpu_bakutis": 100.0,
         "cpu_mawson": 81.9
+    },
+    {
+        "date": "01-20-24 06:05:42",
+        "pairs": 6555,
+        "sdv": 0,
+        "offmap": 1905,
+        "interferogram": 682,
+        "geo": 1902,
+        "figure": 1817,
+        "cleaned": 1224,
+        "cubes": 760,
+        "cpu_oates": 10.1,
+        "cpu_hobbs": 1.1,
+        "cpu_bakutis": 100.0,
+        "cpu_mawson": 96.7
     }
 ]
