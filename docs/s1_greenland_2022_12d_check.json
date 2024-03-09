@@ -9213,5 +9213,21 @@
         "cpu_bakutis": 78.1,
         "cpu_pennell": 0,
         "cpu_mawson": 81.7
+    },
+    {
+        "date": "03-09-24 08:16:15",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 2778,
+        "interferogram": 263,
+        "geo": 2728,
+        "figure": 2703,
+        "cleaned": 2529,
+        "cubes": 3887,
+        "cpu_oates": 16.0,
+        "cpu_hobbs": 70.5,
+        "cpu_bakutis": 78.2,
+        "cpu_pennell": 0,
+        "cpu_mawson": 83.7
     }
 ]
