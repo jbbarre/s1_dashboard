@@ -14269,5 +14269,53 @@
         "cpu_bakutis": 91.3,
         "cpu_pennell": 0,
         "cpu_mawson": 90.1
+    },
+    {
+        "date": "03-27-24 22:18:04",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 3029,
+        "interferogram": 51,
+        "geo": 3001,
+        "figure": 2973,
+        "cleaned": 3001,
+        "cubes": 3887,
+        "cpu_oates": 10.5,
+        "cpu_hobbs": 75.6,
+        "cpu_bakutis": 91.4,
+        "cpu_pennell": 0,
+        "cpu_mawson": 92.3
+    },
+    {
+        "date": "03-28-24 00:10:17",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 3029,
+        "interferogram": 51,
+        "geo": 3001,
+        "figure": 2973,
+        "cleaned": 3001,
+        "cubes": 3887,
+        "cpu_oates": 11.5,
+        "cpu_hobbs": 75.7,
+        "cpu_bakutis": 75.6,
+        "cpu_pennell": 0,
+        "cpu_mawson": 86.0
+    },
+    {
+        "date": "03-28-24 00:11:40",
+        "pairs": 5479,
+        "sdv": 1226,
+        "offmap": 3029,
+        "interferogram": 51,
+        "geo": 3001,
+        "figure": 2973,
+        "cleaned": 3001,
+        "cubes": 3887,
+        "cpu_oates": 2.0,
+        "cpu_hobbs": 77.4,
+        "cpu_bakutis": 74.1,
+        "cpu_pennell": 0,
+        "cpu_mawson": 88.0
     }
 ]
