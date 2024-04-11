@@ -18226,5 +18226,37 @@
         "cpu_bakutis": 0.2,
         "cpu_pennell": 0,
         "cpu_mawson": 0.6
+    },
+    {
+        "date": "04-11-24 10:16:33",
+        "pairs": 5256,
+        "sdv": 1256,
+        "offmap": 1362,
+        "interferogram": 578,
+        "geo": 1264,
+        "figure": 1235,
+        "cleaned": 906,
+        "cubes": 0,
+        "cpu_oates": 12.2,
+        "cpu_hobbs": 2.4,
+        "cpu_bakutis": 0.7,
+        "cpu_pennell": 0,
+        "cpu_mawson": 1.3
+    },
+    {
+        "date": "04-11-24 10:16:33",
+        "pairs": 5256,
+        "sdv": 1256,
+        "offmap": 1362,
+        "interferogram": 578,
+        "geo": 1264,
+        "figure": 1235,
+        "cleaned": 906,
+        "cubes": 0,
+        "cpu_oates": 17.5,
+        "cpu_hobbs": 0.7,
+        "cpu_bakutis": 0.6,
+        "cpu_pennell": 0,
+        "cpu_mawson": 0.7
     }
 ]
