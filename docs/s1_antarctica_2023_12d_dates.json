@@ -25083,7 +25083,7 @@
         "pairs": "Track051004-051179_T050542",
         "date1": "23-10-31",
         "date2": "23-11-12",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track051004-051179_T050815",
@@ -25107,7 +25107,7 @@
         "pairs": "Track051004-051179_T050636",
         "date1": "23-10-31",
         "date2": "23-11-12",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track048904-049079_T050835",
@@ -25263,7 +25263,7 @@
         "pairs": "Track051004-051179_T050725",
         "date1": "23-10-31",
         "date2": "23-11-12",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track047854-048029_T050601",
@@ -26691,7 +26691,7 @@
         "pairs": "Track051004-051179_T050701",
         "date1": "23-10-31",
         "date2": "23-11-12",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track047854-048029_T050652",
@@ -40125,7 +40125,7 @@
         "pairs": "Track051706-051881_T081804",
         "date1": "23-12-18",
         "date2": "23-12-30",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track050131-050306_T081737",
@@ -40311,7 +40311,7 @@
         "pairs": "Track051006-051181_T081806",
         "date1": "23-10-31",
         "date2": "23-11-12",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track049081-049256_T081826",
@@ -40413,7 +40413,7 @@
         "pairs": "Track051706-051881_T081830",
         "date1": "23-12-18",
         "date2": "23-12-30",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track049781-049956_T081803",
@@ -40875,7 +40875,7 @@
         "pairs": "Track051700-051875_T222751",
         "date1": "23-12-17",
         "date2": "23-12-29",
-        "velocities": 0
+        "velocities": 1
     },
     {
         "pairs": "Track049425-049600_T222725",
