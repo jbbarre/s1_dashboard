@@ -12900,12 +12900,6 @@
         "velocities": 1
     },
     {
-        "pairs": "Temp_interf_25m",
-        "date1": "22-12-22",
-        "date2": "23-01-03",
-        "velocities": 0
-    },
-    {
         "pairs": "Track047674-047849_T205639",
         "date1": "23-03-16",
         "date2": "23-03-28",
