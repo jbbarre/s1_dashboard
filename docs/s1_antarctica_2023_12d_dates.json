@@ -12774,6 +12774,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-05-15",
+        "date2": "23-05-27",
+        "velocities": 0
+    },
+    {
         "pairs": "Track048024-048199_T205640",
         "date1": "23-04-09",
         "date2": "23-04-21",
@@ -12916,6 +12922,12 @@
         "date1": "23-05-15",
         "date2": "23-05-27",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-05-15",
+        "date2": "23-05-27",
+        "velocities": 0
     },
     {
         "pairs": "Track047324-047499_T205639",
@@ -13200,6 +13212,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-06-08",
+        "date2": "23-06-20",
+        "velocities": 0
+    },
+    {
         "pairs": "Track046449-046624_T205709",
         "date1": "22-12-22",
         "date2": "23-01-03",
@@ -13216,6 +13234,12 @@
         "date1": "23-05-27",
         "date2": "23-06-08",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-05-27",
+        "date2": "23-06-08",
+        "velocities": 0
     },
     {
         "pairs": "Track047149-047324_T205639",
@@ -13264,6 +13288,12 @@
         "date1": "23-05-27",
         "date2": "23-06-08",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-05-27",
+        "date2": "23-06-08",
+        "velocities": 0
     },
     {
         "pairs": "Track048199-048374_T205707",
@@ -13366,6 +13396,12 @@
         "date1": "23-05-27",
         "date2": "23-06-08",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-05-27",
+        "date2": "23-06-08",
+        "velocities": 0
     },
     {
         "pairs": "Track047674-047849_T205732",
