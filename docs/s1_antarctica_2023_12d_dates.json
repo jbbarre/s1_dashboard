@@ -12654,6 +12654,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-06-20",
+        "date2": "23-07-02",
+        "velocities": 0
+    },
+    {
         "pairs": "Track046974-047149_T205707",
         "date1": "23-01-27",
         "date2": "23-02-08",
@@ -13378,6 +13384,12 @@
         "date1": "23-06-20",
         "date2": "23-07-02",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-06-20",
+        "date2": "23-07-02",
+        "velocities": 0
     },
     {
         "pairs": "Track046799-046974_T205733",
