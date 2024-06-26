@@ -12744,6 +12744,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-11-11",
+        "date2": "23-11-23",
+        "velocities": 0
+    },
+    {
         "pairs": "Track049599-049774_T205645",
         "date1": "23-07-26",
         "date2": "23-08-07",
@@ -12796,6 +12802,12 @@
         "date1": "23-10-30",
         "date2": "23-11-11",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-10-30",
+        "date2": "23-11-11",
+        "velocities": 0
     },
     {
         "pairs": "Track047849-048024_T205707",
@@ -13002,6 +13014,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-10-18",
+        "date2": "23-10-30",
+        "velocities": 0
+    },
+    {
         "pairs": "Track049249-049424_T205711",
         "date1": "23-07-02",
         "date2": "23-07-14",
@@ -13188,6 +13206,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-10-30",
+        "date2": "23-11-11",
+        "velocities": 0
+    },
+    {
         "pairs": "Track046974-047149_T205733",
         "date1": "23-01-27",
         "date2": "23-02-08",
@@ -13204,6 +13228,12 @@
         "date1": "23-11-11",
         "date2": "23-11-23",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-11-11",
+        "date2": "23-11-23",
+        "velocities": 0
     },
     {
         "pairs": "Track047499-047674_T205707",
@@ -13416,6 +13446,12 @@
         "velocities": 1
     },
     {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-10-18",
+        "date2": "23-10-30",
+        "velocities": 0
+    },
+    {
         "pairs": "Track046449-046624_T205641",
         "date1": "22-12-22",
         "date2": "23-01-03",
@@ -13612,6 +13648,12 @@
         "date1": "23-10-30",
         "date2": "23-11-11",
         "velocities": 1
+    },
+    {
+        "pairs": "Temp_interf_25m",
+        "date1": "23-10-30",
+        "date2": "23-11-11",
+        "velocities": 0
     },
     {
         "pairs": "Track050124-050299_T205741",
